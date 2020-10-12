@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "0.9.0"
+SetCollectionMarker.version = "0.9.1"
 
 -- Defaults
 local defaultOptions = {
@@ -62,6 +62,11 @@ local function AddUncollectedIndicator(control, bagID, slotIndex, itemLink, show
     -- If it's already unlocked (collected), then skip
     -- TODO: remove nil check when Markarth drops
     if (IsItemSetCollectionPieceUnlocked and IsItemSetCollectionPieceUnlocked(GetItemLinkItemId(itemLink))) then
+        return
+    end
+
+    -- TODO: remove bound check when Markarth drops
+    if (GetAPIVersion() < 100033 and IsItemLinkBound(itemLink)) then
         return
     end
 

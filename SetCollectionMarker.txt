@@ -1,7 +1,7 @@
 ## Title: SetCollectionMarker
 ## Mark uncollected set items in inventories
 ## Author: Kyzeragon
-## Version: 0.9.0
+## Version: 0.9.1
 ## APIVersion: 100033
 ## DependsOn: LibAddonMenu-2.0
 

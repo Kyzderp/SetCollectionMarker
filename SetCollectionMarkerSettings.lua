@@ -3,7 +3,7 @@ function GetDescriptionString()
 
     -- TODO: remove when Markarth drops
     if (GetAPIVersion() < 100033) then
-        whereDisplay = "all set item pieces, whether they are bound or not. "
+        whereDisplay = "all set item pieces that are not bound. "
             .. "When ESO updates to the Markarth DLC, it will automatically start displaying the icon "
             .. "next to ONLY items that are not in your set collection"
     end
