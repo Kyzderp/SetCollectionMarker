@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "0.9.1"
+SetCollectionMarker.version = "0.9.2"
 
 -- Defaults
 local defaultOptions = {
@@ -20,6 +20,7 @@ local defaultOptions = {
         guild = true,
         guildstore = true,
         crafting = true,
+        transmute = true,
     },
 }
 
@@ -70,9 +71,18 @@ local function AddUncollectedIndicator(control, bagID, slotIndex, itemLink, show
         return
     end
 
+
+    -----------------------------------------------------------------
+    -- Check for grid to set the anchor and offset
+    local anchorControl = WINDOW_MANAGER:GetControlByName(control:GetName() .. 'Name')
+    if (control.isGrid or (control:GetWidth() - control:GetHeight() < 5)) then
+        uncollectedControl:SetAnchor(LEFT, control, BOTTOMLEFT, offset, -SetCollectionMarker.savedOptions.iconSize/2)
+    else
+        local anchorControl = WINDOW_MANAGER:GetControlByName(control:GetName() .. 'Name')
+        uncollectedControl:SetAnchor(LEFT, anchorControl, RIGHT, offset)
+    end
+
     -- Show the icon
-    local controlName = WINDOW_MANAGER:GetControlByName(control:GetName() .. 'Name')
-    uncollectedControl:SetAnchor(LEFT, controlName, RIGHT, offset)
     uncollectedControl:SetDimensions(SetCollectionMarker.savedOptions.iconSize, SetCollectionMarker.savedOptions.iconSize)
     uncollectedControl:SetColor(unpack(SetCollectionMarker.savedOptions.iconColor))
     uncollectedControl:SetHidden(false)
@@ -165,6 +175,11 @@ local function Initialize()
         improvement = {
             list = ZO_SmithingTopLevelImprovementPanelInventoryBackpack,
             showKey = "crafting",
+        },
+        transmute = {
+        -- TODO: remove condition when Markarth drops
+            list = (GetAPIVersion() >= 100033) and ZO_RETRAIT_KEYBOARD.inventory.list or ZO_RETRAIT_STATION_KEYBOARD.retraitPanel.inventory.list,
+            showKey = "transmute",
         },
     }
 

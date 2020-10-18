@@ -109,6 +109,18 @@ function SetCollectionMarker:CreateSettingsMenu()
         },
         {
             type = "checkbox",
+            name = "Transmute Station",
+            tooltip = "Show icon at transmute stations when retraiting",
+            default = true,
+            getFunc = function() return SetCollectionMarker.savedOptions.show.transmute end,
+            setFunc = function(value)
+                SetCollectionMarker.savedOptions.show.transmute = value
+                SetCollectionMarker.OnSetCollectionUpdated()
+            end,
+            width = "full",
+        },
+        {
+            type = "checkbox",
             name = "Guild Store",
             tooltip = "Show icon in guild store search list and personal listings",
             default = true,
