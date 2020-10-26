@@ -5,7 +5,27 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "0.9.2"
+SetCollectionMarker.version = "0.9.3"
+
+-- Location for the icon
+SetCollectionMarker.LOCATION_BEFORE = 1 -- Before the item link
+SetCollectionMarker.LOCATION_AFTER = 2 -- After the item link
+SetCollectionMarker.LOCATION_BEGINNING = 3 -- At the beginning of the message (in front of timestamps if pChat)
+SetCollectionMarker.LOCATION_END = 4 -- At the end of the message
+
+SetCollectionMarker.locationString = {
+    [SetCollectionMarker.LOCATION_BEFORE] = "Before",
+    [SetCollectionMarker.LOCATION_AFTER] = "After",
+    [SetCollectionMarker.LOCATION_BEGINNING] = "Beginning",
+    [SetCollectionMarker.LOCATION_END] = "End",
+}
+
+SetCollectionMarker.stringLocation = {
+    ["Before"] = SetCollectionMarker.LOCATION_BEFORE,
+    ["After"] = SetCollectionMarker.LOCATION_AFTER,
+    ["Beginning"] = SetCollectionMarker.LOCATION_BEGINNING,
+    ["End"] = SetCollectionMarker.LOCATION_END,
+}
 
 -- Defaults
 local defaultOptions = {
@@ -22,14 +42,49 @@ local defaultOptions = {
         crafting = true,
         transmute = true,
     },
+    chatMessageShow = true,
+    chatMessageLocation = SetCollectionMarker.LOCATION_BEFORE,
+    chatSystemShow = true,
+    chatSystemLocation = SetCollectionMarker.LOCATION_BEGINNING,
+    chatIconSize = 18,
+    chatIconColor = {0.4, 1, 0.5},
 }
+
+---------------------------------------------------------------------
+-- Whether we should show an icon or not
+function SetCollectionMarker.ShouldShowIcon(itemLink)
+    local itemType = GetItemLinkItemType(itemLink)
+
+    -- Check that this is a gear item
+    if (itemType ~= ITEMTYPE_ARMOR and itemType ~= ITEMTYPE_WEAPON) then
+        return false
+    end
+
+    -- Check that this is a set item
+    local hasSet = GetItemLinkSetInfo(itemLink)
+    if (not hasSet) then
+        return false
+    end
+
+    -- If it's already unlocked (collected), then skip
+    -- TODO: remove nil check when Markarth drops
+    if (IsItemSetCollectionPieceUnlocked and IsItemSetCollectionPieceUnlocked(GetItemLinkItemId(itemLink))) then
+        return false
+    end
+
+    -- TODO: remove bound check when Markarth drops
+    if (GetAPIVersion() < 100033 and IsItemLinkBound(itemLink)) then
+        return false
+    end
+
+    return true
+end
 
 ---------------------------------------------------------------------
 -- Display icon to the right of item
 local function AddUncollectedIndicator(control, bagID, slotIndex, itemLink, show, offset)
     local uncollectedControl = control:GetNamedChild("UncollectedControl")
-    local itemType = GetItemLinkItemType(itemLink)
-    
+
     -- Use the item set collections tab icon
     local function CreateUncollectedControl(parent)
         local control = WINDOW_MANAGER:CreateControl(parent:GetName() .. "UncollectedControl", parent, CT_TEXTURE)
@@ -42,35 +97,13 @@ local function AddUncollectedIndicator(control, bagID, slotIndex, itemLink, show
     if (not uncollectedControl) then
         uncollectedControl = CreateUncollectedControl(control)
     end
-    uncollectedControl:SetHidden(true)
 
     -- Icon should remain hidden if specified in settings
-    if (not show) then
+    -- Also check the item itself
+    if (not show or not SetCollectionMarker.ShouldShowIcon(itemLink)) then
+        uncollectedControl:SetHidden(true)
         return
     end
-
-    -- Check that this is a gear item
-    if (itemType ~= ITEMTYPE_ARMOR and itemType ~= ITEMTYPE_WEAPON) then
-        return
-    end
-
-    -- Check that this is a set item
-    local hasSet = GetItemLinkSetInfo(itemLink)
-    if (not hasSet) then
-        return
-    end
-
-    -- If it's already unlocked (collected), then skip
-    -- TODO: remove nil check when Markarth drops
-    if (IsItemSetCollectionPieceUnlocked and IsItemSetCollectionPieceUnlocked(GetItemLinkItemId(itemLink))) then
-        return
-    end
-
-    -- TODO: remove bound check when Markarth drops
-    if (GetAPIVersion() < 100033 and IsItemLinkBound(itemLink)) then
-        return
-    end
-
 
     -----------------------------------------------------------------
     -- Check for grid to set the anchor and offset
@@ -139,7 +172,7 @@ function SetCollectionMarker.OnSetCollectionUpdated()
 end
 
 ---------------------------------------------------------------------
--- Initialize 
+-- Initialize
 local function Initialize()
     -- Settings and saved variables
     SetCollectionMarker.savedOptions = ZO_SavedVars:NewAccountWide("SetCollectionMarkerSavedVariables", 1, "Options", defaultOptions)
@@ -189,9 +222,15 @@ local function Initialize()
         SetCollectionMarker.iconTexture = "esoui/art/crafting/smithing_tabicon_armorset_down.dds"
     end
 
+    -- Update the icon string with the current style
+    SetCollectionMarkerChat.UpdateIconString()
+
+    -- Create settings
     SetCollectionMarker:CreateSettingsMenu()
 
     SetupBagHooks()
+
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "Activated", EVENT_PLAYER_ACTIVATED, SetCollectionMarkerChat.OnPlayerActivated)
 end
 
 
