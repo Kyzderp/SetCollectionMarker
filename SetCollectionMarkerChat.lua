@@ -70,13 +70,21 @@ function SetCollectionMarkerChat.OnPlayerActivated()
 
     --------------------------
     -- Set up normal chat hook
-    local function AddIconToMessage(origMessage)
-        return SetCollectionMarkerChat.ParseItemLinks(origMessage, SetCollectionMarker.savedOptions.chatMessageLocation)
+    local function AddIconToMessage(messageType, fromName, text, isFromCustomerService, fromDisplayName)
+        local formattedText = SetCollectionMarkerChat.ParseItemLinks(text, SetCollectionMarker.savedOptions.chatMessageLocation)
+
+        local channelInfo = ZO_ChatSystem_GetChannelInfo()[messageType]
+        if (not channelInfo or not channelInfo.format) then
+            return
+        end
+
+        return formattedText, channelInfo.saveTarget
     end
     local oldFormatter = CHAT_ROUTER:GetRegisteredMessageFormatters()[EVENT_CHAT_MESSAGE_CHANNEL]
-    if (previousFormatter) then
-        CHAT_ROUTER:RegisterMessageFormatter(EVENT_CHAT_MESSAGE_CHANNEL, function(...)
-            return AddIconToMessage(oldFormatter(...))
+    if (oldFormatter) then
+        CHAT_ROUTER:RegisterMessageFormatter(EVENT_CHAT_MESSAGE_CHANNEL, function(messageType, fromName, text, isFromCustomerService, fromDisplayName)
+            local oldText = oldFormatter(messageType, fromName, text, isFromCustomerService, fromDisplayName)
+            return AddIconToMessage(messageType, fromName, oldText, isFromCustomerService, fromDisplayName)
         end)
     else
         CHAT_ROUTER:RegisterMessageFormatter(EVENT_CHAT_MESSAGE_CHANNEL, AddIconToMessage)
