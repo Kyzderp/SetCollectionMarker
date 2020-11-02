@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "0.9.4"
+SetCollectionMarker.version = "0.9.5"
 
 -- Location for the icon
 SetCollectionMarker.LOCATION_BEFORE = 1 -- Before the item link
@@ -63,6 +63,11 @@ function SetCollectionMarker.ShouldShowIcon(itemLink)
     -- Check that this is a set item
     local hasSet = GetItemLinkSetInfo(itemLink)
     if (not hasSet) then
+        return false
+    end
+
+    -- Check that the item is not crafted
+    if (IsItemLinkCrafted(itemLink)) then
         return false
     end
 
