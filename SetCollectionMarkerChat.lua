@@ -15,6 +15,10 @@ end
 ---------------------------------------------------------------------
 -- Add the icon(s) to the message
 function SetCollectionMarkerChat.ParseItemLinks(message, location)
+    if (not message) then
+        return
+    end
+
     -- Use a table to make sure the links are unique, for gsub later
     local found = {}
     local count = 0
