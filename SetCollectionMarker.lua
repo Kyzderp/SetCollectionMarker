@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "0.9.6"
+SetCollectionMarker.version = "1.0.0"
 
 -- Location for the icon
 SetCollectionMarker.LOCATION_BEFORE = 1 -- Before the item link
@@ -86,13 +86,7 @@ function SetCollectionMarker.ShouldShowIcon(itemLink)
     end
 
     -- If it's already unlocked (collected), then skip
-    -- TODO: remove nil check when Markarth drops
-    if (IsItemSetCollectionPieceUnlocked and IsItemSetCollectionPieceUnlocked(GetItemLinkItemId(itemLink))) then
-        return false
-    end
-
-    -- TODO: remove bound check when Markarth drops
-    if (GetAPIVersion() < 100033 and IsItemLinkBound(itemLink)) then
+    if (IsItemSetCollectionPieceUnlocked(GetItemLinkItemId(itemLink))) then
         return false
     end
 
@@ -196,10 +190,7 @@ local function Initialize()
     -- Settings and saved variables
     SetCollectionMarker.savedOptions = ZO_SavedVars:NewAccountWide("SetCollectionMarkerSavedVariables", 1, "Options", defaultOptions)
 
-    -- TODO: remove condition when Markarth drops
-    if (GetAPIVersion() >= 100033) then
-        EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "CollectionUpdate", EVENT_ITEM_SET_COLLECTION_UPDATED, SetCollectionMarker.OnSetCollectionUpdated)
-    end
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "CollectionUpdate", EVENT_ITEM_SET_COLLECTION_UPDATED, SetCollectionMarker.OnSetCollectionUpdated)
     EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "StoreSearch", EVENT_TRADING_HOUSE_RESPONSE_RECEIVED, SetupGuildStoreHooks)
 
     -- Inventories to show icons in, thanks TraitBuddy
@@ -229,17 +220,12 @@ local function Initialize()
             showKey = "crafting",
         },
         transmute = {
-        -- TODO: remove condition when Markarth drops
-            list = (GetAPIVersion() >= 100033) and ZO_RETRAIT_KEYBOARD.inventory.list or ZO_RETRAIT_STATION_KEYBOARD.retraitPanel.inventory.list,
+            list = ZO_RETRAIT_KEYBOARD.inventory.list,
             showKey = "transmute",
         },
     }
 
     SetCollectionMarker.iconTexture = "esoui/art/collections/collections_tabIcon_itemSets_down.dds"
-    -- TODO: remove when Markarth drops
-    if (GetAPIVersion() < 100033) then
-        SetCollectionMarker.iconTexture = "esoui/art/crafting/smithing_tabicon_armorset_down.dds"
-    end
 
     -- Update the icon string with the current style
     SetCollectionMarkerChat.UpdateIconString()

@@ -1,30 +1,13 @@
 function GetDescriptionString()
-    local whereDisplay = "items not in your set collection"
-
-    -- TODO: remove when Markarth drops
-    if (GetAPIVersion() < 100033) then
-        whereDisplay = "all set item pieces that are not bound. "
-            .. "When ESO updates to the Markarth DLC, it will automatically start displaying the icon "
-            .. "next to ONLY items that are not in your set collection"
-    end
-    return string.format("Displays an icon |c%02x%02x%02x|t36:36:%s:inheritcolor|t|r next to %s.",
+    return string.format("Displays an icon |c%02x%02x%02x|t36:36:%s:inheritcolor|t|r next to items not in your set collection.",
         SetCollectionMarker.savedOptions.iconColor[1] * 255,
         SetCollectionMarker.savedOptions.iconColor[2] * 255,
         SetCollectionMarker.savedOptions.iconColor[3] * 255,
-        SetCollectionMarker.iconTexture,
-        whereDisplay)
+        SetCollectionMarker.iconTexture)
 end
 
 function GetChatDescriptionString()
-    local whereDisplay = "items not in your set collection"
-
-    -- TODO: remove when Markarth drops
-    if (GetAPIVersion() < 100033) then
-        whereDisplay = "all set item pieces that are not bound. "
-            .. "When ESO updates to the Markarth DLC, it will automatically start displaying the icon "
-            .. "for ONLY items that are not in your set collection"
-    end
-    return string.format("Displays an inline icon on chat messages that contain %s. Examples with location:\n\n" ..
+    return string.format("Displays an inline icon on chat messages that contain items not in your set collection. Examples with location:\n\n" ..
         "Beginning:\n" ..
         "  %s|cfd7a1a[Group][@Kyzeragon]: anyone want |cFFDD00[Ring of the Advancing Yokeda]|cfd7a1a?|r\n" ..
         "End:\n" ..
@@ -33,7 +16,6 @@ function GetChatDescriptionString()
         "  |cfd7a1a[Group][@Kyzeragon]: anyone want %s|cFFDD00[Ring of the Advancing Yokeda]|cfd7a1a?|r\n" ..
         "After:\n" ..
         "  |cfd7a1a[Group][@Kyzeragon]: anyone want |cFFDD00[Ring of the Advancing Yokeda]%s|cfd7a1a?|r",
-        whereDisplay,
         SetCollectionMarkerChat.iconString,
         SetCollectionMarkerChat.iconString,
         SetCollectionMarkerChat.iconString,
