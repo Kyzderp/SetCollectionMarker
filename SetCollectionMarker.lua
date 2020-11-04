@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "1.0.0"
+SetCollectionMarker.version = "1.0.1"
 
 -- Location for the icon
 SetCollectionMarker.LOCATION_BEFORE = 1 -- Before the item link
@@ -55,33 +55,8 @@ local defaultOptions = {
 function SetCollectionMarker.ShouldShowIcon(itemLink)
     local itemType = GetItemLinkItemType(itemLink)
 
-    -- Check that this is a gear item
-    if (itemType ~= ITEMTYPE_ARMOR and itemType ~= ITEMTYPE_WEAPON) then
-        return false
-    end
-
-    -- Check that this is a set item
-    -- boolean hasSet, string setName, number numBonuses, number numEquipped, number maxEquipped, number setId
-    local hasSet, _, _, _, _, setId = GetItemLinkSetInfo(itemLink)
-    if (not hasSet) then
-        return false
-    end
-
-    -- Check that the item is not crafted
-    if (IsItemLinkCrafted(itemLink)) then
-        return false
-    end
-
-    -- This can happen for certain quest rewards or unique boss drops that give you crafted sets, like Prismatic Blade
-    local isCrafted = LibSets.IsCraftedSet(setId)
-    if (isCrafted) then
-        return false
-    end
-
-    -- Certain other sets are not collectible
-    if (   setId == 380 -- Prophet's Set (levelling rewards)
-        or setId == 381 -- Broken Soul (levelling rewards)
-        ) then
+    -- Check that this is a candidate for set collection
+    if (not IsItemLinkSetCollectionPiece(itemLink)) then
         return false
     end
 
