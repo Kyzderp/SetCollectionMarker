@@ -61,6 +61,9 @@ function SetCollectionMarkerChat.OnPlayerActivated()
     -----------------------------
     -- Set up system message hook
     local function AddIconToSystem(origMessage)
+        if (not SetCollectionMarker.savedOptions.chatSystemShow) then
+            return origMessage
+        end
         return SetCollectionMarkerChat.ParseItemLinks(origMessage, SetCollectionMarker.savedOptions.chatSystemLocation)
     end
     local previousFormatter = CHAT_ROUTER:GetRegisteredMessageFormatters()["AddSystemMessage"]
@@ -75,7 +78,10 @@ function SetCollectionMarkerChat.OnPlayerActivated()
     --------------------------
     -- Set up normal chat hook
     local function AddIconToMessage(messageType, fromName, text, isFromCustomerService, fromDisplayName)
-        local formattedText = SetCollectionMarkerChat.ParseItemLinks(text, SetCollectionMarker.savedOptions.chatMessageLocation)
+        local formattedText = text
+        if (SetCollectionMarker.savedOptions.chatMessageShow) then
+            formattedText = SetCollectionMarkerChat.ParseItemLinks(text, SetCollectionMarker.savedOptions.chatMessageLocation)
+        end
 
         local channelInfo = ZO_ChatSystem_GetChannelInfo()[messageType]
         if (not channelInfo or not channelInfo.format) then
