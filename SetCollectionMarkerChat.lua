@@ -57,7 +57,7 @@ end
 
 ---------------------------------------------------------------------
 -- After player is activated, do some chat things
-function SetCollectionMarkerChat.OnPlayerActivated()
+local function SetupChatHooks()
     if (SetCollectionMarker.logger) then SetCollectionMarker.logger:Debug("Adding chat hooks") end
     -----------------------------
     -- Set up system message hook
@@ -103,4 +103,19 @@ function SetCollectionMarkerChat.OnPlayerActivated()
 
     -- No longer need this
     EVENT_MANAGER:UnregisterForEvent(SetCollectionMarker.name .. "Activated", EVENT_PLAYER_ACTIVATED)
+end
+
+function SetCollectionMarkerChat.OnPlayerActivated()
+    if (pChat) then
+        -- Delay initialization by half a second to allow pChat to do pChat.InitializeChatHandlers
+        -- Unfortunately pChat doesn't seem to fire any event or set a public variable that I can
+        -- check, so 500ms is just a hacky shot in the dark.
+        EVENT_MANAGER:RegisterForUpdate(SetCollectionMarker.name .. "DelayedActivated", 500,
+            function()
+                EVENT_MANAGER:UnregisterForUpdate(SetCollectionMarker.name .. "DelayedActivated")
+                SetupChatHooks()
+            end)
+    else
+        SetupChatHooks()
+    end
 end
