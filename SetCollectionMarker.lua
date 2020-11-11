@@ -5,7 +5,12 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "1.0.2"
+
+-- LibDebugLogger
+if (LibDebugLogger) then
+    SetCollectionMarker.logger = LibDebugLogger(SetCollectionMarker.name)
+    SetCollectionMarker.logger:Debug("Addon loading...")
+end
 
 -- Location for the icon
 SetCollectionMarker.LOCATION_BEFORE = 1 -- Before the item link

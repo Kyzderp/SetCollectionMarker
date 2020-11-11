@@ -58,6 +58,7 @@ end
 ---------------------------------------------------------------------
 -- After player is activated, do some chat things
 function SetCollectionMarkerChat.OnPlayerActivated()
+    if (SetCollectionMarker.logger) then SetCollectionMarker.logger:Debug("Adding chat hooks") end
     -----------------------------
     -- Set up system message hook
     local function AddIconToSystem(origMessage)
