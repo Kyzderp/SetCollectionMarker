@@ -152,6 +152,19 @@ local function SetupGuildStoreHooks()
     ZO_ScrollList_RefreshVisible(ZO_TradingHouseBrowseItemsRightPaneSearchResults)
 end
 
+---------------------------------------------------------------------
+-- Set up hooks to display icons in buyback tab, thanks Master Recipe List
+local function HookBuyback()
+    ZO_PreHook(ZO_BuyBackList.dataTypes[1], "setupCallback", function( ... )
+        local control, data = ...
+        if (control.slotControlType and control.slotControlType == 'listSlot' and data.slotIndex) then
+            local itemLink = GetBuybackItemLink(data.slotIndex, LINK_STYLE_BRACKETS)
+            local show = SetCollectionMarker.savedOptions.show.bag
+            AddUncollectedIndicator(control, nil, nil, itemLink, show, SetCollectionMarker.savedOptions.iconOffset)
+        end
+    end)
+end
+
 
 ---------------------------------------------------------------------
 -- When the collection updates or settings change, we should refresh the view so the icons immediately update
@@ -172,6 +185,9 @@ local function Initialize()
 
     EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "CollectionUpdate", EVENT_ITEM_SET_COLLECTION_UPDATED, SetCollectionMarker.OnSetCollectionUpdated)
     EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "StoreSearch", EVENT_TRADING_HOUSE_RESPONSE_RECEIVED, SetupGuildStoreHooks)
+
+    -- Not sure why hooking ZO_BuyBackList with the other bags results in your worn items instead
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "Buyback", EVENT_OPEN_STORE, HookBuyback)
 
     -- Inventories to show icons in, thanks TraitBuddy
     SetCollectionMarker.inventories = {
@@ -214,6 +230,7 @@ local function Initialize()
     SetCollectionMarker:CreateSettingsMenu()
 
     SetupBagHooks()
+    SetCollectionMarkerGamepad.SetupGamepadBagHooks()
 
     EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "Activated", EVENT_PLAYER_ACTIVATED, SetCollectionMarkerChat.OnPlayerActivated)
 end
