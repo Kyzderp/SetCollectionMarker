@@ -46,6 +46,7 @@ local defaultOptions = {
         guildstore = true,
         crafting = true,
         transmute = true,
+        trading = true,
     },
     chatMessageShow = true,
     chatMessageLocation = SetCollectionMarker.LOCATION_BEFORE,
@@ -167,6 +168,34 @@ end
 
 
 ---------------------------------------------------------------------
+-- Listen for updates in the trade window and adjust icons accordingly
+-- EVENT_TRADE_ITEM_ADDED (number eventCode, TradeParticipant who, number tradeIndex, ItemUISoundCategory itemSoundCategory)
+-- EVENT_TRADE_ITEM_REMOVED (number eventCode, TradeParticipant who, number tradeIndex, ItemUISoundCategory itemSoundCategory)
+-- EVENT_TRADE_ITEM_UPDATED (number eventCode, TradeParticipant who, number tradeIndex)
+local function UpdateTradeIcon(eventCode, who, tradeIndex)
+    local whoString = (who == TRADE_ME) and "My" or "Their"
+    local control = WINDOW_MANAGER:GetControlByName(whoString .. "TradeWindowSlot" .. tostring(tradeIndex))
+    -- Hide the icon too when an item is removed
+    local show = SetCollectionMarker.savedOptions.show.trading and (eventCode ~= EVENT_TRADE_ITEM_REMOVED)
+    AddUncollectedIndicator(control, nil, nil, GetTradeItemLink(who, tradeIndex), show, SetCollectionMarker.savedOptions.iconOffset)
+end
+
+-- Quick update of all trade slots to hide any leftover icons from previous trade
+local function UpdateAllTradeIcons()
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_ME, 1)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_ME, 2)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_ME, 3)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_ME, 4)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_ME, 5)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_THEM, 1)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_THEM, 2)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_THEM, 3)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_THEM, 4)
+    UpdateTradeIcon(EVENT_TRADE_ITEM_ADDED, TRADE_THEM, 5)
+end
+
+
+---------------------------------------------------------------------
 -- When the collection updates or settings change, we should refresh the view so the icons immediately update
 function SetCollectionMarker.OnSetCollectionUpdated()
     ZO_ScrollList_RefreshVisible(ZO_PlayerInventoryList)
@@ -188,6 +217,12 @@ local function Initialize()
 
     -- Not sure why hooking ZO_BuyBackList with the other bags results in your worn items instead
     EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "Buyback", EVENT_OPEN_STORE, HookBuyback)
+
+    -- Hook trading window
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "TradeStarted", EVENT_TRADE_INVITE_ACCEPTED, UpdateAllTradeIcons)
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "TradeAdded", EVENT_TRADE_ITEM_ADDED, UpdateTradeIcon)
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "TradeRemoved", EVENT_TRADE_ITEM_REMOVED, UpdateTradeIcon)
+    EVENT_MANAGER:RegisterForEvent(SetCollectionMarker.name .. "TradeUpdated", EVENT_TRADE_ITEM_UPDATED, UpdateTradeIcon)
 
     -- Inventories to show icons in, thanks TraitBuddy
     SetCollectionMarker.inventories = {

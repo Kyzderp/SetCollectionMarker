@@ -74,6 +74,18 @@ function SetCollectionMarker:CreateSettingsMenu()
                 },
                 {
                     type = "checkbox",
+                    name = "Trade",
+                    tooltip = "Show icon when trading with other players",
+                    default = true,
+                    getFunc = function() return SetCollectionMarker.savedOptions.show.trading end,
+                    setFunc = function(value)
+                        SetCollectionMarker.savedOptions.show.trading = value
+                        SetCollectionMarker.OnSetCollectionUpdated()
+                    end,
+                    width = "full",
+                },
+                {
+                    type = "checkbox",
                     name = "Bank",
                     tooltip = "Show icon in your personal bank",
                     default = true,

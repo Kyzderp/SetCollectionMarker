@@ -106,10 +106,10 @@ local function SetupChatHooks()
 end
 
 function SetCollectionMarkerChat.OnPlayerActivated()
-    if (pChat) then
+    if (pChat or rChat) then
         -- Delay initialization by half a second to allow pChat to do pChat.InitializeChatHandlers
         -- Unfortunately pChat doesn't seem to fire any event or set a public variable that I can
-        -- check, so 500ms is just a hacky shot in the dark.
+        -- check, so 500ms is just a hacky shot in the dark. Same hack for rChat.
         EVENT_MANAGER:RegisterForUpdate(SetCollectionMarker.name .. "DelayedActivated", 500,
             function()
                 EVENT_MANAGER:UnregisterForUpdate(SetCollectionMarker.name .. "DelayedActivated")
