@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "1.2.1"
+SetCollectionMarker.version = "1.2.2"
 
 -- LibDebugLogger
 if (LibDebugLogger) then
