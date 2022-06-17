@@ -123,7 +123,7 @@ function SetCollectionMarker:CreateSettingsMenu()
                 {
                     type = "checkbox",
                     name = "Crafting Station",
-                    tooltip = "Show icon at crafting stations",
+                    tooltip = "Show icon at crafting stations, including the deconstruction assistant",
                     default = true,
                     getFunc = function() return SetCollectionMarker.savedOptions.show.crafting end,
                     setFunc = function(value)

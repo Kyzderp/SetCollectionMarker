@@ -5,7 +5,7 @@
 
 SetCollectionMarker = {}
 SetCollectionMarker.name = "SetCollectionMarker"
-SetCollectionMarker.version = "1.2.6"
+SetCollectionMarker.version = "1.3.0"
 
 -- LibDebugLogger
 if (LibDebugLogger) then
@@ -249,6 +249,10 @@ local function Initialize()
         },
         improvement = {
             list = ZO_SmithingTopLevelImprovementPanelInventoryBackpack,
+            showKey = "crafting",
+        },
+        deconassistant = {
+            list = ZO_UniversalDeconstructionTopLevel_KeyboardPanelInventoryBackpack,
             showKey = "crafting",
         },
         transmute = {
