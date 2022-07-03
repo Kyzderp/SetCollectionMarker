@@ -1,18 +1,20 @@
 -- Thanks Friday-The13-rus!
-SetCollectionMarkerGamepad = {}
+SetCollectionMarker = SetCollectionMarker or {}
+local SCM = SetCollectionMarker
+SCM.Gamepad = SCM.Gamepad or {}
 
 local function AddUncollectedGamepadIndicator(control, itemLink, show)
     local statusIndicator = control.statusIndicator
     if statusIndicator then
-        if (show and SetCollectionMarker.ShouldShowIcon(itemLink)) then
+        if (show and SCM.ShouldShowIcon(itemLink)) then
             statusIndicator:Hide()
-            statusIndicator:AddIcon(SetCollectionMarker.iconTexture)
+            statusIndicator:AddIcon(SCM.iconTexture)
             statusIndicator:Show()
         end
     end
 end
 
-function SetCollectionMarkerGamepad.SetupGamepadBagHooks()
+function SCM.Gamepad.SetupGamepadBagHooks()
     local inventories = {
         bag = {
             init = { object = ZO_GamepadInventory, functionName = "InitializeItemList" },
@@ -62,7 +64,7 @@ function SetCollectionMarkerGamepad.SetupGamepadBagHooks()
     local function SetupHook(inventory)
         for _, templateName in ipairs({ inventory.templateName, inventory.templateName .. "WithHeader" }) do
             SecurePostHook(ZO_ScrollList_GetDataTypeTable(inventory.list(), templateName), "setupFunction", function(control, data)
-                local show = SetCollectionMarker.savedOptions.show[inventory.showKey]
+                local show = SCM.savedOptions.show[inventory.showKey]
                 local itemLink = GetItemLink(data.bagId, data.slotIndex, LINK_STYLE_BRACKETS)
                 AddUncollectedGamepadIndicator(control, itemLink, show)
             end)

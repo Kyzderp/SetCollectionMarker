@@ -1,12 +1,15 @@
-function GetDescriptionString()
+SetCollectionMarker = SetCollectionMarker or {}
+local SCM = SetCollectionMarker
+
+local function GetDescriptionString()
     return string.format("Displays an icon |c%02x%02x%02x|t36:36:%s:inheritcolor|t|r next to items not in your set collection.",
-        SetCollectionMarker.savedOptions.iconColor[1] * 255,
-        SetCollectionMarker.savedOptions.iconColor[2] * 255,
-        SetCollectionMarker.savedOptions.iconColor[3] * 255,
-        SetCollectionMarker.iconTexture)
+        SCM.savedOptions.iconColor[1] * 255,
+        SCM.savedOptions.iconColor[2] * 255,
+        SCM.savedOptions.iconColor[3] * 255,
+        SCM.iconTexture)
 end
 
-function GetChatDescriptionString()
+local function GetChatDescriptionString()
     return string.format("Displays an inline icon on chat messages that contain items not in your set collection. Examples with location:\n\n" ..
         "Beginning:\n" ..
         "  %s|cfd7a1a[Group][@Kyzeragon]: anyone want |cFFDD00[Ring of the Advancing Yokeda]|cfd7a1a?|r\n" ..
@@ -16,10 +19,10 @@ function GetChatDescriptionString()
         "  |cfd7a1a[Group][@Kyzeragon]: anyone want %s|cFFDD00[Ring of the Advancing Yokeda]|cfd7a1a?|r\n" ..
         "After:\n" ..
         "  |cfd7a1a[Group][@Kyzeragon]: anyone want |cFFDD00[Ring of the Advancing Yokeda]%s|cfd7a1a?|r",
-        SetCollectionMarkerChat.iconString,
-        SetCollectionMarkerChat.iconString,
-        SetCollectionMarkerChat.iconString,
-        SetCollectionMarkerChat.iconString)
+        SCM.Chat.iconString,
+        SCM.Chat.iconString,
+        SCM.Chat.iconString,
+        SCM.Chat.iconString)
 end
 
 local function UpdateSettingsDesc()
@@ -32,13 +35,13 @@ local function UpdateSettingsChatDesc()
     WINDOW_MANAGER:GetControlByName("SetCollectionMarker#ChatDescription"):UpdateValue()
 end
 
-function SetCollectionMarker:CreateSettingsMenu()
+function SCM.CreateSettingsMenu()
     local LAM = LibAddonMenu2
     local panelData = {
         type = "panel",
         name = "|c08BD1DSet Collection Marker|r",
         author = "Kyzeragon",
-        version = SetCollectionMarker.version,
+        version = SCM.version,
         registerForRefresh = true,
         registerForDefaults = true,
     }
@@ -65,10 +68,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Bag",
                     tooltip = "Show icon in your character's inventory",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.bag end,
+                    getFunc = function() return SCM.savedOptions.show.bag end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.bag = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.bag = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -77,10 +80,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Trade",
                     tooltip = "Show icon when trading with other players",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.trading end,
+                    getFunc = function() return SCM.savedOptions.show.trading end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.trading = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.trading = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -89,10 +92,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Bank",
                     tooltip = "Show icon in your personal bank",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.bank end,
+                    getFunc = function() return SCM.savedOptions.show.bank end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.bank = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.bank = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -101,10 +104,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "House Storage",
                     tooltip = "Show icon in house storage coffers",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.housebank end,
+                    getFunc = function() return SCM.savedOptions.show.housebank end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.housebank = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.housebank = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -113,10 +116,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Guild Bank",
                     tooltip = "Show icon in guild bank",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.guild end,
+                    getFunc = function() return SCM.savedOptions.show.guild end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.guild = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.guild = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -125,10 +128,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Crafting Station",
                     tooltip = "Show icon at crafting stations, including the deconstruction assistant",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.crafting end,
+                    getFunc = function() return SCM.savedOptions.show.crafting end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.crafting = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.crafting = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -137,10 +140,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Transmute Station",
                     tooltip = "Show icon at transmute stations when retraiting",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.transmute end,
+                    getFunc = function() return SCM.savedOptions.show.transmute end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.transmute = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.transmute = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -149,10 +152,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "Guild Store",
                     tooltip = "Show icon in guild store search list and personal listings",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.show.guildstore end,
+                    getFunc = function() return SCM.savedOptions.show.guildstore end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.show.guildstore = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.show.guildstore = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                     width = "full",
                 },
@@ -171,20 +174,20 @@ function SetCollectionMarker:CreateSettingsMenu()
                     step = 2,
                     default = 36,
                     width = full,
-                    getFunc = function() return SetCollectionMarker.savedOptions.iconSize end,
+                    getFunc = function() return SCM.savedOptions.iconSize end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.iconSize = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.iconSize = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                 },
                 {
                     type = "colorpicker",
                     name = "Color",
                     default = {r = 0.4, g = 1, b = 0.5, a = 1},
-                    getFunc = function() return unpack(SetCollectionMarker.savedOptions.iconColor) end,
+                    getFunc = function() return unpack(SCM.savedOptions.iconColor) end,
                     setFunc = function(r, g, b)
-                        SetCollectionMarker.savedOptions.iconColor = {r, g, b}
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.iconColor = {r, g, b}
+                        SCM.OnSetCollectionUpdated()
                         UpdateSettingsDesc()
                     end,
                 },
@@ -197,10 +200,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     step = 10,
                     default = 0,
                     width = full,
-                    getFunc = function() return SetCollectionMarker.savedOptions.iconOffset end,
+                    getFunc = function() return SCM.savedOptions.iconOffset end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.iconOffset = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.iconOffset = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                 },
                 {
@@ -212,10 +215,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     step = 10,
                     default = 0,
                     width = full,
-                    getFunc = function() return SetCollectionMarker.savedOptions.iconStoreOffset end,
+                    getFunc = function() return SCM.savedOptions.iconStoreOffset end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.iconStoreOffset = value
-                        SetCollectionMarker.OnSetCollectionUpdated()
+                        SCM.savedOptions.iconStoreOffset = value
+                        SCM.OnSetCollectionUpdated()
                     end,
                 },
             },
@@ -243,9 +246,9 @@ function SetCollectionMarker:CreateSettingsMenu()
                     name = "System Messages",
                     tooltip = "Show an icon when a system message contains an item that is not in your set collection",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.chatSystemShow end,
+                    getFunc = function() return SCM.savedOptions.chatSystemShow end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.chatSystemShow = value
+                        SCM.savedOptions.chatSystemShow = value
                     end,
                     width = "half",
                 },
@@ -255,21 +258,21 @@ function SetCollectionMarker:CreateSettingsMenu()
                     tooltip = "Where to show the icon for system messages",
                     default = "Beginning",
                     choices = {"Beginning", "End", "Before", "After"},
-                    getFunc = function() return SetCollectionMarker.locationString[SetCollectionMarker.savedOptions.chatSystemLocation] end,
+                    getFunc = function() return SCM.locationString[SCM.savedOptions.chatSystemLocation] end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.chatSystemLocation = SetCollectionMarker.stringLocation[value]
+                        SCM.savedOptions.chatSystemLocation = SCM.stringLocation[value]
                     end,
                     width = "half",
-                    disabled = function() return not SetCollectionMarker.savedOptions.chatSystemShow end,
+                    disabled = function() return not SCM.savedOptions.chatSystemShow end,
                 },
                 {
                     type = "checkbox",
                     name = "Chat Messages",
                     tooltip = "Show an icon when a player chat message contains an item that is not in your set collection",
                     default = true,
-                    getFunc = function() return SetCollectionMarker.savedOptions.chatMessageShow end,
+                    getFunc = function() return SCM.savedOptions.chatMessageShow end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.chatMessageShow = value
+                        SCM.savedOptions.chatMessageShow = value
                     end,
                     width = "half",
                 },
@@ -279,12 +282,12 @@ function SetCollectionMarker:CreateSettingsMenu()
                     tooltip = "Where to show the icon for player chat messages",
                     default = "Before",
                     choices = {"Beginning", "End", "Before", "After"},
-                    getFunc = function() return SetCollectionMarker.locationString[SetCollectionMarker.savedOptions.chatMessageLocation] end,
+                    getFunc = function() return SCM.locationString[SCM.savedOptions.chatMessageLocation] end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.chatMessageLocation = SetCollectionMarker.stringLocation[value]
+                        SCM.savedOptions.chatMessageLocation = SCM.stringLocation[value]
                     end,
                     width = "half",
-                    disabled = function() return not SetCollectionMarker.savedOptions.chatMessageShow end,
+                    disabled = function() return not SCM.savedOptions.chatMessageShow end,
                 },
                 {
                     type = "header",
@@ -299,10 +302,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     step = 2,
                     default = 18,
                     width = full,
-                    getFunc = function() return SetCollectionMarker.savedOptions.chatIconSize end,
+                    getFunc = function() return SCM.savedOptions.chatIconSize end,
                     setFunc = function(value)
-                        SetCollectionMarker.savedOptions.chatIconSize = value
-                        SetCollectionMarkerChat.UpdateIconString()
+                        SCM.savedOptions.chatIconSize = value
+                        SCM.Chat.UpdateIconString()
                         UpdateSettingsChatDesc()
                     end,
                 },
@@ -310,10 +313,10 @@ function SetCollectionMarker:CreateSettingsMenu()
                     type = "colorpicker",
                     name = "Color",
                     default = {r = 0.4, g = 1, b = 0.5, a = 1},
-                    getFunc = function() return unpack(SetCollectionMarker.savedOptions.chatIconColor) end,
+                    getFunc = function() return unpack(SCM.savedOptions.chatIconColor) end,
                     setFunc = function(r, g, b)
-                        SetCollectionMarker.savedOptions.chatIconColor = {r, g, b}
-                        SetCollectionMarkerChat.UpdateIconString()
+                        SCM.savedOptions.chatIconColor = {r, g, b}
+                        SCM.Chat.UpdateIconString()
                         UpdateSettingsChatDesc()
                     end,
                 },
@@ -321,6 +324,6 @@ function SetCollectionMarker:CreateSettingsMenu()
         }
     }
 
-    SetCollectionMarker.addonPanel = LAM:RegisterAddonPanel("SetCollectionMarkerOptions", panelData)
+    SCM.addonPanel = LAM:RegisterAddonPanel("SetCollectionMarkerOptions", panelData)
     LAM:RegisterOptionControls("SetCollectionMarkerOptions", optionsData)
 end
