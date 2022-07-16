@@ -61,8 +61,6 @@ local defaultOptions = {
 ---------------------------------------------------------------------
 -- Whether we should show an icon or not
 function SCM.ShouldShowIcon(itemLink)
-    local itemType = GetItemLinkItemType(itemLink)
-
     -- Check that this is a candidate for set collection
     if (not IsItemLinkSetCollectionPiece(itemLink)) then
         return false
@@ -272,6 +270,7 @@ local function Initialize()
 
     SetupBagHooks()
     SCM.Gamepad.SetupGamepadBagHooks()
+    SCM.Trade.Initialize()
 
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "Activated", EVENT_PLAYER_ACTIVATED, SCM.Chat.OnPlayerActivated)
 end

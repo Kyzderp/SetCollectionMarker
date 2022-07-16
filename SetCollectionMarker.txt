@@ -12,4 +12,6 @@
 SetCollectionMarker.lua
 SetCollectionMarkerGamepad.lua
 SetCollectionMarkerChat.lua
+Trade.lua
+Trade.xml
 SetCollectionMarkerSettings.lua
