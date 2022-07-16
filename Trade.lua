@@ -78,7 +78,7 @@ local function GetMatchingItems(atName, characterName)
     for _, item in pairs(bagCache) do
         if (IsItemBound(item.bagId, item.slotIndex)) then
             -- Bound already
-        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, atName)) then
+        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(atName, "@", ""))) then
             -- BoP Tradeable but not tradeable with this person
         else
             -- TODO: maybe match trait too?
