@@ -100,6 +100,9 @@ local function AddItemsToTrade()
         if (not bagId and #matches > 0) then
             local slotIndex = table.remove(matches, 1) -- TODO: maybe don't remove until it's traded away
             local itemLink = GetItemLink(BAG_BACKPACK, slotIndex, LINK_STYLE_BRACKETS)
+            local itemId = GetItemLinkItemId(itemLink)
+            SCM.Whisper.GetWantedItems()[currentlyTradingName].items[itemId] = nil -- Also remove it from the original
+
             d(string.format("Adding %s to slot %d", itemLink, tradeIndex))
             TradeAddItem(BAG_BACKPACK, slotIndex, tradeIndex)
         end
