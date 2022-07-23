@@ -272,7 +272,7 @@ local function Initialize()
 
     SetupBagHooks()
     SCM.Gamepad.SetupGamepadBagHooks()
-    SCM.Trade.Initialize()
+    SCM.Whisper.Initialize()
 
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "Activated", EVENT_PLAYER_ACTIVATED, SCM.Chat.OnPlayerActivated)
 end

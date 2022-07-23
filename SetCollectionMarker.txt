@@ -14,5 +14,6 @@ src/SetCollectionMarkerGamepad.lua
 src/Settings.lua
 src/ChatFormatter.lua
 
+src/requested/Whisper.lua
 src/requested/Trade.lua
 src/requested/Buttons.xml
