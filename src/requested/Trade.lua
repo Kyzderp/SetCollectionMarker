@@ -107,6 +107,7 @@ local function AddItemsToTrade()
             local itemId = GetItemLinkItemId(itemLink)
             SCM.Whisper.GetWantedItems()[currentlyTradingName].items[itemId] = nil -- Also remove it from the original
 
+            -- TODO: if the item is already in the window we get an alert back, but it should be ok
             d(string.format("Adding %s to slot %d", itemLink, tradeIndex))
             TradeAddItem(BAG_BACKPACK, slotIndex, tradeIndex)
         end

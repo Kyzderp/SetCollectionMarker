@@ -25,7 +25,7 @@ end
 --     - formatted text
 --     - index for requestLinks
 ---------------------------------------------------------------------
-local function ParseItemLinks(message, location, fromDisplayName)
+local function ParseItemLinks(message, location, fromDisplayName, messageType)
     if (not message) then
         return nil, nil
     end
@@ -55,8 +55,7 @@ local function ParseItemLinks(message, location, fromDisplayName)
     end
 
     local requestKey
-    if (fromDisplayName) then
-    -- if (fromDisplayName and fromDisplayName ~= GetUnitDisplayName("player")) then
+    if (fromDisplayName and fromDisplayName ~= GetUnitDisplayName("player") and messageType ~= CHAT_CHANNEL_WHISPER_SENT) then
     -- |H1:item:74181:364:50:0:0:0:0:0:0:0:0:0:0:0:0:41:0:0:0:0:0|h|h
         requestKey = #requestLinks + 1
         requestLinks[requestKey] = {name = fromDisplayName, items = itemsString}
@@ -115,9 +114,10 @@ local function SetupChatHooks()
     local function AddIconToMessage(messageType, fromName, text, isFromCustomerService, fromDisplayName)
         local formattedText = text
         if (SCM.savedOptions.chatMessageShow) then
-            formattedText, requestKey = ParseItemLinks(text, SCM.savedOptions.chatMessageLocation, fromDisplayName)
+            formattedText, requestKey = ParseItemLinks(text, SCM.savedOptions.chatMessageLocation, fromDisplayName, messageType)
         end
         if (requestKey and SCM.savedOptions.showRequestLink) then
+            -- Add a [Req] button if there are items we need
             formattedText = string.format("|c%02x%02x%02x|H0:%s:%d|h[Req]|h|r%s",
                 SCM.savedOptions.chatIconColor[1] * 255,
                 SCM.savedOptions.chatIconColor[2] * 255,
