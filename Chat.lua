@@ -2,8 +2,13 @@ SetCollectionMarker = SetCollectionMarker or {}
 local SCM = SetCollectionMarker
 SCM.Chat = SCM.Chat or {}
 
+local REQUEST_LINK_TYPE = "SCMreq"
+local requestLinks = {}
+SCM.requestLinks = requestLinks -- TODO: remove /script d(SetCollectionMarker.requestLinks)
+
 ---------------------------------------------------------------------
 -- Should be called from settings whenever the style is updated
+---------------------------------------------------------------------
 function SCM.Chat.UpdateIconString()
     SCM.Chat.iconString = string.format("|c%02x%02x%02x|t%d:%d:%s:inheritcolor|t|r",
         SCM.savedOptions.chatIconColor[1] * 255,
@@ -16,13 +21,18 @@ end
 
 ---------------------------------------------------------------------
 -- Add the icon(s) to the message
-local function ParseItemLinks(message, location)
+-- Returns:
+--     - formatted text
+--     - index for requestLinks
+---------------------------------------------------------------------
+local function ParseItemLinks(message, location, fromDisplayName)
     if (not message) then
-        return
+        return nil, nil
     end
 
     -- Use a table to make sure the links are unique, for gsub later
-    local found = {}
+    local itemsString = ""
+    local withIcons = {}
     local count = 0
 
     -- Non-greedy matches. normally it would just be numbers... but Group Loot Notifier inserts :by:<name> at the end for some reason...
@@ -30,35 +40,57 @@ local function ParseItemLinks(message, location)
         if (SCM.ShouldShowIcon(itemLink)) then
             -- things to be subbed for
             if (location == SCM.LOCATION_BEFORE) then
-                found[itemLink] = SCM.Chat.iconString .. itemLink
+                withIcons[itemLink] = SCM.Chat.iconString .. itemLink
             elseif (location == SCM.LOCATION_AFTER) then
-                found[itemLink] = itemLink .. SCM.Chat.iconString
+                withIcons[itemLink] = itemLink .. SCM.Chat.iconString
             end
+            itemsString = itemsString .. itemLink
             count = count + 1
         end
     end
 
     -- No item links
     if (count == 0) then
-        return message
+        return message, nil
+    end
+
+    local requestKey
+    if (fromDisplayName) then
+    -- if (fromDisplayName and fromDisplayName ~= GetUnitDisplayName("player")) then
+    -- |H1:item:74181:364:50:0:0:0:0:0:0:0:0:0:0:0:0:41:0:0:0:0:0|h|h
+        requestKey = #requestLinks + 1
+        requestLinks[requestKey] = {name = fromDisplayName, items = itemsString}
     end
 
     -- For the single-icon options, just put it in the Location
     if (location == SCM.LOCATION_BEGINNING) then
-        return SCM.Chat.iconString .. message
+        return SCM.Chat.iconString .. message, requestKey
     elseif (location == SCM.LOCATION_END) then
-        return message .. SCM.Chat.iconString
+        return message .. SCM.Chat.iconString, requestKey
     end
 
     -- For each-icon option, substitute in the strings
-    for link, withIcon in pairs(found) do
+    for link, withIcon in pairs(withIcons) do
         message = string.gsub(message, link, withIcon)
     end
-    return message
+    return message, requestKey
+end
+
+---------------------------------------------------------------------
+-- Request link click handling
+---------------------------------------------------------------------
+local function OnLinkClicked(_, _, _, _, linkType, requestKey)
+    if (linkType == REQUEST_LINK_TYPE) then
+        local requestData = requestLinks[tonumber(requestKey)]
+        StartChatInput(string.format(SCM.savedOptions.requestFormat, requestData.items),
+            CHAT_CHANNEL_WHISPER, requestData.name)
+        return true
+    end
 end
 
 ---------------------------------------------------------------------
 -- After player is activated, do some chat things
+---------------------------------------------------------------------
 local function SetupChatHooks()
     if (SCM.logger) then SCM.logger:Debug("Adding chat hooks") end
     -----------------------------
@@ -83,7 +115,16 @@ local function SetupChatHooks()
     local function AddIconToMessage(messageType, fromName, text, isFromCustomerService, fromDisplayName)
         local formattedText = text
         if (SCM.savedOptions.chatMessageShow) then
-            formattedText = ParseItemLinks(text, SCM.savedOptions.chatMessageLocation)
+            formattedText, requestKey = ParseItemLinks(text, SCM.savedOptions.chatMessageLocation, fromDisplayName)
+        end
+        if (requestKey and SCM.savedOptions.showRequestLink) then
+            formattedText = string.format("|c%02x%02x%02x|H0:%s:%d|h[Req]|h|r%s",
+                SCM.savedOptions.chatIconColor[1] * 255,
+                SCM.savedOptions.chatIconColor[2] * 255,
+                SCM.savedOptions.chatIconColor[3] * 255,
+                REQUEST_LINK_TYPE,
+                requestKey,
+                formattedText)
         end
 
         local channelInfo = ZO_ChatSystem_GetChannelInfo()[messageType]
@@ -102,6 +143,8 @@ local function SetupChatHooks()
     else
         CHAT_ROUTER:RegisterMessageFormatter(EVENT_CHAT_MESSAGE_CHANNEL, AddIconToMessage)
     end
+
+    LINK_HANDLER:RegisterCallback(LINK_HANDLER.LINK_MOUSE_UP_EVENT, OnLinkClicked)
 
     -- No longer need this
     EVENT_MANAGER:UnregisterForEvent(SCM.name .. "Activated", EVENT_PLAYER_ACTIVATED)

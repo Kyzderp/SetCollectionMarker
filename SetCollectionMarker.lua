@@ -56,6 +56,8 @@ local defaultOptions = {
     chatSystemLocation = SCM.LOCATION_BEGINNING,
     chatIconSize = 18,
     chatIconColor = {0.4, 1, 0.5},
+    showRequestLink = true,
+    requestFormat = "Can I please have %s?",
 }
 
 ---------------------------------------------------------------------

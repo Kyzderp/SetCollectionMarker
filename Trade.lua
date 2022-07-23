@@ -37,6 +37,12 @@ Can also be keyed by character name
 ]]
 local wantedItems = {}
 local aliases = {}
+
+-- Currently trading recipient
+local otherCharacterName = ""
+local otherDisplayName = ""
+
+-- Correct "key" for trading recipient. Should usually be the display name, but could be character?
 local currentlyTradingName = ""
 
 ---------------------------------------------------------------------
@@ -44,12 +50,12 @@ local currentlyTradingName = ""
 ---------------------------------------------------------------------
 -- Returns: {[id] = trait}
 --          nil if none
-local function GetWantedItems(atName, characterName)
-    local data = wantedItems[atName]
-    currentlyTradingName = atName
+local function GetWantedItems()
+    local data = wantedItems[otherDisplayName]
+    currentlyTradingName = otherDisplayName
     if (not data) then
-        data = wantedItems[characterName]
-        currentlyTradingName = characterName
+        data = wantedItems[otherCharacterName]
+        currentlyTradingName = otherCharacterName
     end
     if (not data) then return end
 
@@ -65,8 +71,8 @@ end
 
 -- Returns: {slotIndex, slotIndex,}
 --          {} if none
-local function GetMatchingItems(atName, characterName)
-    local wanted = GetWantedItems(atName, characterName)
+local function GetMatchingItems()
+    local wanted = GetWantedItems()
     if (not wanted) then
         -- None of us are wanted
         return {}
@@ -78,7 +84,7 @@ local function GetMatchingItems(atName, characterName)
     for _, item in pairs(bagCache) do
         if (IsItemBound(item.bagId, item.slotIndex)) then
             -- Bound already
-        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(atName, "@", ""))) then
+        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(otherDisplayName, "@", ""))) then
             -- BoP Tradeable but not tradeable with this person
         else
             -- TODO: maybe match trait too?
@@ -98,8 +104,8 @@ end
 ---------------------------------------------------------------------
 local matches = {}
 
-local function UpdateTradeButton(atName, characterName)
-    matches = GetMatchingItems(atName, characterName)
+local function UpdateTradeButton()
+    matches = GetMatchingItems()
 end
 
 local function AddItemsToTrade()
@@ -166,9 +172,6 @@ end
 ---------------------------------------------------------------------
 -- Trading
 ---------------------------------------------------------------------
-local otherCharacterName = ""
-local otherDisplayName = ""
-
 local function OnTrade()
     d(string.format("Trading with %s / %s", otherCharacterName, otherDisplayName))
     SCM_TradeButton:SetParent(ZO_TradeMyControls)
