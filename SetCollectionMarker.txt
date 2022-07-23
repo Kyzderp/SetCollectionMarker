@@ -9,12 +9,10 @@
 
 ## SavedVariables: SetCollectionMarkerSavedVariables
 
-SetCollectionMarker.lua
-SetCollectionMarkerGamepad.lua
+src/SetCollectionMarker.lua
+src/SetCollectionMarkerGamepad.lua
+src/Settings.lua
+src/ChatFormatter.lua
 
-Chat.lua
-
-Trade.lua
-Trade.xml
-
-Settings.lua
+src/requested/Trade.lua
+src/requested/Buttons.xml
