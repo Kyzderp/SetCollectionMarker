@@ -68,10 +68,14 @@ local function GetMatchingItems()
     for _, item in pairs(bagCache) do
         if (IsItemBound(item.bagId, item.slotIndex)) then
             -- Bound already
+        elseif (IsItemPlayerLocked(item.bagId, item.slotIndex)) then
+            -- Locked
+            -- TODO: show in tooltip that it's locked, instead of not adding to list at all
         elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(otherDisplayName, "@", ""))) then
             -- BoP Tradeable but not tradeable with this person
         else
             -- TODO: maybe match trait too?
+            -- TODO: this might add doubles?
             local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
             local itemId = GetItemLinkItemId(itemLink)
             if (wanted[itemId]) then
