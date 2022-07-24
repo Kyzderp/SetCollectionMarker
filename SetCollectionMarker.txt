@@ -16,4 +16,5 @@ src/ChatFormatter.lua
 
 src/requested/Whisper.lua
 src/requested/Trade.lua
+src/requested/Mail.lua
 src/requested/Buttons.xml

@@ -73,7 +73,8 @@ local function OnWhisper(_, channelType, fromName, text, _, fromDisplayName)
     data.items = items
     data.timeWhispered = GetGameTimeSeconds()
     wantedItems[name] = data
-    SCM.Trade.UpdateTradeButton(fromDisplayName, fromName)
+    SCM.Trade.UpdateTradeButton()
+    SCM.Mail.UpdateMailUI()
 end
 
 ---------------------------------------------------------------------
@@ -83,5 +84,6 @@ function SCM.Whisper.Initialize()
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "Whisper", EVENT_CHAT_MESSAGE_CHANNEL, OnWhisper)
 
     SCM.Trade.Initialize()
+    SCM.Mail.Initialize()
 end
 

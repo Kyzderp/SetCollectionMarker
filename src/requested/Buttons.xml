@@ -20,5 +20,40 @@
                 </Button>
             </Controls>
         </Control>
+
+        <!-- Mail -->
+        <Control name="MailPlayerTemplate" virtual="true">
+            <Dimensions x="60" y="60"/>
+            <Controls>
+                <Backdrop name="$(parent)Backdrop" centerColor="88000000" edgeColor="00000000" hidden="false">
+                    <AnchorFill/>
+                </Backdrop>
+                <Label name="$(parent)Label" font="ZoFontGame" color="dddddd" text="@Kyzeragon wants:" verticalAlignment="TOP" horizontalAlignment="LEFT" wrapMode="TEXT_WRAP_MODE_TRUNCATE" hidden="false" tier="HIGH">
+                    <Anchor point="TOPLEFT" relativeTo="$(parent)" relativePoint="TOPLEFT" offsetX="2" offsetY="2"/>
+                    <Anchor point="BOTTOMRIGHT" relativeTo="$(parent)" relativePoint="BOTTOMRIGHT" offsetX="-2" offsetY="-2"/>
+                </Label>
+                <Button name="$(parent)AddItems" alpha="1" clickSound="Default_Click" topmost="true" tier="HIGH">
+                    <Textures normal="/esoui/art/collections/collections_tabicon_itemsets_down.dds"/>
+                    <Dimensions x="24" y="24"/>
+                    <Anchor point="TOPRIGHT" relativeTo="$(parent)" relativePoint="TOPRIGHT" offsetX="-2" offsetY="2"/>
+                    <OnClicked>
+                        SetCollectionMarker.Mail.AddItemsToMail(self)
+                    </OnClicked>
+                    <OnMouseEnter>
+                        ZO_Tooltips_ShowTextTooltip(self, RIGHT, "Add this recipient and items to the mail")
+                    </OnMouseEnter>
+                    <OnMouseExit>
+                        ZO_Tooltips_HideTextTooltip()
+                    </OnMouseExit>
+                </Button>
+            </Controls>
+        </Control>
+
+        <Control name="SCM_Mail" clampedToScreen="true" mouseEnabled="false" movable="false" hidden="false" tier="HIGH">
+            <Dimensions x="60" y="600"/>
+            <Anchor point="TOPLEFT" relativeTo="GuiRoot" relativePoint="TOPLEFT"/>
+            <Controls>
+            </Controls>
+        </Control>
     </Controls>
 </GuiXml>
