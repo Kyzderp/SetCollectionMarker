@@ -84,7 +84,6 @@ local function GetMatchingItemsString(name)
     return resultItems
 end
 
-local matches = {}
 ---------------------------------------------------------------------
 -- Mail side "panel" showing players and their wanted items
 ---------------------------------------------------------------------
@@ -141,7 +140,7 @@ local function UpdateMailUI()
 
     -- Now go through the controls again and set them all to the maximum text width
     for _, control in pairs(controls) do
-        control:SetWidth(maximumTextWidth)
+        control:SetWidth(maximumTextWidth + 24) -- Add a little buffer for the button
     end
 end
 SCM.Mail.UpdateMailUI = UpdateMailUI
@@ -174,27 +173,27 @@ SCM.Mail.AddItemsToMail = AddItemsToMail
 function SCM.Mail.Initialize()
     SCM_Mail:SetParent(ZO_MailSend)
 
-    SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
-        items = {
-            [102404] = 1,
-            [180231] = 1,
-        },
-        timeWhispered = GetGameTimeSeconds(),
-    }
+    -- SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
+    --     items = {
+    --         [102404] = 1,
+    --         [180231] = 1,
+    --     },
+    --     timeWhispered = GetGameTimeSeconds(),
+    -- }
 
-    SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
-        items = {
-            [174633] = 1,
-            [155052] = 1,
-            [102144] = 1,
-            [15746] = 1,
-            [102176] = 1,
-            [125826] = 1,
-            [180231] = 1,
-            [102374] = 1,
-        },
-        timeWhispered = GetGameTimeSeconds(),
-    }
+    -- SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
+    --     items = {
+    --         [174633] = 1,
+    --         [155052] = 1,
+    --         [102144] = 1,
+    --         [15746] = 1,
+    --         [102176] = 1,
+    --         [125826] = 1,
+    --         [180231] = 1,
+    --         [102374] = 1,
+    --     },
+    --     timeWhispered = GetGameTimeSeconds(),
+    -- }
 
     UpdateMailUI()
 end
