@@ -87,7 +87,7 @@ local function AddItemsToMail(button)
 
     for i = 1, MAIL_MAX_ATTACHED_ITEMS do
         if (#matches > 0) then
-            local slotIndex = table.remove(matches, 1) -- TODO: maybe don't remove until it's traded away
+            local slotIndex = table.remove(matches, 1) -- TODO: maybe don't remove until it's mailed away
             local itemLink = GetItemLink(BAG_BACKPACK, slotIndex, LINK_STYLE_BRACKETS)
             local itemId = GetItemLinkItemId(itemLink)
             SCM.Whisper.GetWantedItems()[name].items[itemId] = nil -- Also remove it from the original

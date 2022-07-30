@@ -59,7 +59,7 @@ local function AddItemsToTrade()
             local itemId = GetItemLinkItemId(itemLink)
             SCM.Whisper.GetWantedItems()[currentlyTradingName].items[itemId] = nil -- Also remove it from the original
 
-            -- TODO: if the item is already in the window we get an alert back, but it should be ok
+            -- If the item is already in the window we get an alert back, but it should be ok
             d(string.format("Adding %s to slot %d", itemLink, tradeIndex))
             TradeAddItem(BAG_BACKPACK, slotIndex, tradeIndex)
         end
@@ -76,7 +76,7 @@ SCM.Trade.GetTradeButtonTooltip = GetTradeButtonTooltip
 -- Trading
 ---------------------------------------------------------------------
 local function OnTrade()
-    d(string.format("Trading with %s / %s", otherCharacterName, otherDisplayName))
+    -- d(string.format("Trading with %s / %s", otherCharacterName, otherDisplayName))
     SCM_TradeButton:SetParent(ZO_TradeMyControls)
     SCM_TradeButton:ClearAnchors()
     SCM_TradeButton:SetAnchor(RIGHT, ZO_TradeMyControlsMoney, LEFT, -10, 0)

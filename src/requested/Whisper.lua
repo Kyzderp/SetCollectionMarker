@@ -11,17 +11,11 @@ items to the trade window.
 Once the item is traded, remove it from the list, in case they trade
 again. We also need to deal with not putting duplicate items, and
 checking that player's list for duplicate items.
-
-TODO: Maybe add a button to mailing too?
-TODO: Tradeable and not locked
 ]]
 
 ---------------------------------------------------------------------
 -- Common
 ---------------------------------------------------------------------
--- TODO: is saving the ID sufficient? or do we care about trait?
---       correct trait should probably have higher priority
-
 --[[
 wantedItems = {
     ["@Kyzeragon"] = {
@@ -107,7 +101,6 @@ local function GetMatchingItems(name, allowBoP)
                     end
                 end
             else
-                -- TODO: maybe match trait too?
                 -- TODO: this might add doubles?
                 -- Add to list and tooltip
                 resultItems = string.format("%s\n%s", resultItems, itemLink)

@@ -4,7 +4,6 @@ SCM.Chat = SCM.Chat or {}
 
 local REQUEST_LINK_TYPE = "SCMreq"
 local requestLinks = {}
-SCM.requestLinks = requestLinks -- TODO: remove /script d(SetCollectionMarker.requestLinks)
 
 ---------------------------------------------------------------------
 -- Should be called from settings whenever the style is updated
