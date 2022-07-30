@@ -28,43 +28,48 @@ local function UpdateMailUI()
     local previousControl
     local maximumTextWidth = 0
     for name, _ in pairs(wantedItems) do
-        controlIndex = controlIndex + 1
-        local control = controls[controlIndex]
-
-        -- Create control if nonexistent
-        if (not control) then
-            control = CreateControlFromVirtual(
-                "$(parent)Player" .. tostring(controlIndex),
-                SCM_Mail,
-                "MailPlayerTemplate",
-                "")
-            table.insert(controls, control)
-        end
-        control:SetHidden(false)
-
-        -- Update the control's text
         local _, itemsString = SCM.Whisper.GetMatchingItems(name, false)
-        local label = control:GetNamedChild("Label")
-        label:SetText(string.format("%s wants:%s",
-            name,
-            itemsString))
 
-        -- Update size
-        control:SetDimensions(1000, 1000)
-        local textWidth = label:GetTextWidth() + 4
-        control:SetHeight(label:GetTextHeight() + 4)
-        if (textWidth > maximumTextWidth) then
-            maximumTextWidth = textWidth
-        end
+        -- Only do a control for it if there are actually items
+        -- The GetMatchingItems call may have cleaned the data out
+        if (itemsString ~= "") then
+            controlIndex = controlIndex + 1
+            local control = controls[controlIndex]
 
-        -- Update anchor
-        control.recipientName = name
-        if (not previousControl) then
-            control:SetAnchor(TOPRIGHT, ZO_MailSend, TOPLEFT, -40)
-        else
-            control:SetAnchor(TOPRIGHT, previousControl, BOTTOMRIGHT, 0, 4)
+            -- Create control if nonexistent
+            if (not control) then
+                control = CreateControlFromVirtual(
+                    "$(parent)Player" .. tostring(controlIndex),
+                    SCM_Mail,
+                    "MailPlayerTemplate",
+                    "")
+                table.insert(controls, control)
+            end
+            control:SetHidden(false)
+
+            -- Update the control's text
+            local label = control:GetNamedChild("Label")
+            label:SetText(string.format("%s wants:%s",
+                name,
+                itemsString))
+
+            -- Update size
+            control:SetDimensions(1000, 1000)
+            local textWidth = label:GetTextWidth() + 4
+            control:SetHeight(label:GetTextHeight() + 4)
+            if (textWidth > maximumTextWidth) then
+                maximumTextWidth = textWidth
+            end
+
+            -- Update anchor
+            control.recipientName = name
+            if (not previousControl) then
+                control:SetAnchor(TOPRIGHT, ZO_MailSend, TOPLEFT, -40)
+            else
+                control:SetAnchor(TOPRIGHT, previousControl, BOTTOMRIGHT, 0, 4)
+            end
+            previousControl = control
         end
-        previousControl = control
     end
 
     -- Now go through the controls again and set them all to the maximum text width

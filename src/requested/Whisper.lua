@@ -58,9 +58,13 @@ local function GetRecipientWantedItems(name)
     end
 
     -- Clean struct if there are no items
+    local itemCount = 0
+    for _, _ in pairs(data.items) do
+        return data.items
+    end
 
-
-    return data.items
+    wantedItems[name] = nil
+    return
 end
 
 -- Returns: {slotIndex, slotIndex,} , itemsString
