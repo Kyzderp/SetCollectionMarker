@@ -11,9 +11,6 @@ items to the trade window.
 Once the item is traded, remove it from the list, in case they trade
 again. We also need to deal with not putting duplicate items, and
 checking that player's list for duplicate items.
-
-TODO: Maybe add a button to mailing too?
-TODO: Tradeable and not locked
 ]]
 
 ---------------------------------------------------------------------
@@ -27,73 +24,28 @@ local otherDisplayName = ""
 local currentlyTradingName = ""
 
 ---------------------------------------------------------------------
--- Item Searching
+-- The data could be saved with either @name or character name, maybe
 ---------------------------------------------------------------------
--- Returns: {[id] = trait}
---          nil if none
-local function GetTraderWantedItems()
+local function UpdateTraderDataName()
     local wantedItems = SCM.Whisper.GetWantedItems()
 
     -- Check both the display name and the character name
-    local data = wantedItems[otherDisplayName]
-    currentlyTradingName = otherDisplayName
-    if (not data) then
-        data = wantedItems[otherCharacterName]
+    if (wantedItems[otherDisplayName]) then
+        currentlyTradingName = otherDisplayName
+    else
         currentlyTradingName = otherCharacterName
     end
-    if (not data) then return end
-
-    -- Clean struct if over an hour ago
-    local age = GetGameTimeSeconds() - data.timeWhispered
-    if (age > 360) then
-        wantedItems[currentlyTradingName] = nil
-        return
-    end
-
-    return data.items
-end
-
--- Returns: {slotIndex, slotIndex,}
---          {} if none
-local function GetMatchingItems()
-    local wanted = GetTraderWantedItems()
-    if (not wanted) then
-        -- None of us are wanted
-        return {}
-    end
-
-    -- Go through bag to find matching items
-    local matches = {}
-    local bagCache = SHARED_INVENTORY:GetOrCreateBagCache(BAG_BACKPACK)
-    for _, item in pairs(bagCache) do
-        if (IsItemBound(item.bagId, item.slotIndex)) then
-            -- Bound already
-        elseif (IsItemPlayerLocked(item.bagId, item.slotIndex)) then
-            -- Locked
-            -- TODO: show in tooltip that it's locked, instead of not adding to list at all
-        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex) and not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(otherDisplayName, "@", ""))) then
-            -- BoP Tradeable but not tradeable with this person
-        else
-            -- TODO: maybe match trait too?
-            -- TODO: this might add doubles?
-            local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
-            local itemId = GetItemLinkItemId(itemLink)
-            if (wanted[itemId]) then
-                table.insert(matches, item.slotIndex)
-            end
-        end
-    end
-
-    return matches
 end
 
 ---------------------------------------------------------------------
 -- Trade Inventory Button
 ---------------------------------------------------------------------
 local matches = {}
+local itemsString = ""
 
 local function UpdateTradeButton()
-    matches = GetMatchingItems()
+    UpdateTraderDataName()
+    matches, itemsString = SCM.Whisper.GetMatchingItems(currentlyTradingName, true)
 end
 SCM.Trade.UpdateTradeButton = UpdateTradeButton
 
@@ -116,13 +68,7 @@ end
 SCM.Trade.AddItemsToTrade = AddItemsToTrade
 
 local function GetTradeButtonTooltip()
-    local resultItems = ""
-    for _, slotIndex in pairs(matches) do
-        local itemLink = GetItemLink(BAG_BACKPACK, slotIndex, LINK_STYLE_BRACKETS)
-        resultItems = string.format("%s\n%s", resultItems, itemLink)
-    end
-
-    return string.format("%s wants:%s", currentlyTradingName, resultItems)
+    return string.format("%s wants:%s", currentlyTradingName, itemsString)
 end
 SCM.Trade.GetTradeButtonTooltip = GetTradeButtonTooltip
 

@@ -41,8 +41,89 @@ function SCM.Whisper.GetWantedItems()
 end
 
 ---------------------------------------------------------------------
+-- Item Searching
+---------------------------------------------------------------------
+-- Returns: {[id] = trait}
+--          nil if none
+local function GetRecipientWantedItems(name)
+    -- Check both the display name and the character name
+    local data = wantedItems[name]
+    if (not data) then return end
+
+    -- Clean struct if over an hour ago
+    local age = GetGameTimeSeconds() - data.timeWhispered
+    if (age > 360) then
+        wantedItems[name] = nil
+        return
+    end
+
+    -- Clean struct if there are no items
+
+
+    return data.items
+end
+
+-- Returns: {slotIndex, slotIndex,} , itemsString
+--          {} if none
+local function GetMatchingItems(name, allowBoP)
+    local wanted = GetRecipientWantedItems(name)
+    local resultItems = ""
+    if (not wanted) then
+        -- None of us are wanted
+        return {}, ""
+    end
+
+    -- Go through bag to find matching items
+    local matches = {}
+    local bagCache = SHARED_INVENTORY:GetOrCreateBagCache(BAG_BACKPACK)
+    for _, item in pairs(bagCache) do
+        local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
+        local itemId = GetItemLinkItemId(itemLink)
+        if (wanted[itemId]) then
+            if (IsItemBound(item.bagId, item.slotIndex)) then
+                -- Bound already, add tooltip
+                resultItems = string.format("%s\n%s (Bound)", resultItems, itemLink)
+            elseif (IsItemPlayerLocked(item.bagId, item.slotIndex)) then
+                -- Locked, add tooltip
+                resultItems = string.format("%s\n%s (Locked)", resultItems, itemLink)
+            elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex)) then
+                -- BoP Tradeable
+                if (not allowBoP) then
+                    -- Cannot be mailed, add tooltip
+                    resultItems = string.format("%s\n%s (BoP)", resultItems, itemLink)
+                else
+                    -- Can be traded
+                    if (not IsDisplayNameInItemBoPAccountTable(item.bagId, item.slotIndex, string.gsub(name, "@", ""))) then
+                        -- But cannot be traded with this player
+                        resultItems = string.format("%s\n%s (BoP untradeable)", resultItems, itemLink)
+                    else
+                        -- Tradeable, add to list and tooltip
+                        resultItems = string.format("%s\n%s", resultItems, itemLink)
+                        table.insert(matches, item.slotIndex)
+                    end
+                end
+            else
+                -- TODO: maybe match trait too?
+                -- TODO: this might add doubles?
+                -- Add to list and tooltip
+                resultItems = string.format("%s\n%s", resultItems, itemLink)
+                table.insert(matches, item.slotIndex)
+            end
+        end
+    end
+
+    return matches, resultItems
+end
+SCM.Whisper.GetMatchingItems = GetMatchingItems
+
+---------------------------------------------------------------------
 -- Chatting
 ---------------------------------------------------------------------
+local function UpdateUIs()
+    SCM.Trade.UpdateTradeButton()
+    SCM.Mail.UpdateMailUI()
+end
+
 -- EVENT_CHAT_MESSAGE_CHANNEL (*[ChannelType|#ChannelType]* _channelType_, *string* _fromName_, *string* _text_, *bool* _isCustomerService_, *string* _fromDisplayName_)
 local function OnWhisper(_, channelType, fromName, text, _, fromDisplayName)
     if (channelType ~= CHAT_CHANNEL_WHISPER) then return end
@@ -73,8 +154,7 @@ local function OnWhisper(_, channelType, fromName, text, _, fromDisplayName)
     data.items = items
     data.timeWhispered = GetGameTimeSeconds()
     wantedItems[name] = data
-    SCM.Trade.UpdateTradeButton()
-    SCM.Mail.UpdateMailUI()
+    UpdateUIs()
 end
 
 ---------------------------------------------------------------------
@@ -82,6 +162,13 @@ end
 ---------------------------------------------------------------------
 function SCM.Whisper.Initialize()
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "Whisper", EVENT_CHAT_MESSAGE_CHANNEL, OnWhisper)
+
+    -- The EVENT_INVENTORY_SLOT_LOCKED events don't work for this, what are they for?
+    EVENT_MANAGER:RegisterForEvent(SCM.name .. "Lock", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, function(_, bagId, _, _, _, inventoryUpdateReason)
+        if (inventoryUpdateReason == INVENTORY_UPDATE_REASON_PLAYER_LOCKED and bagId == BAG_BACKPACK) then
+            UpdateUIs()
+        end
+    end)
 
     SCM.Trade.Initialize()
     SCM.Mail.Initialize()

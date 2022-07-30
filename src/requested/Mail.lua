@@ -11,78 +11,7 @@ items to the trade window.
 Once the item is traded, remove it from the list, in case they trade
 again. We also need to deal with not putting duplicate items, and
 checking that player's list for duplicate items.
-
-TODO: Maybe add a button to mailing too?
-TODO: Tradeable and not locked
 ]]
-
----------------------------------------------------------------------
--- Item Searching
----------------------------------------------------------------------
--- Returns: {[id] = trait}
---          nil if none
-local function GetRecipientWantedItems(name)
-    local wantedItems = SCM.Whisper.GetWantedItems()
-
-    -- Check both the display name and the character name
-    local data = wantedItems[name]
-    if (not data) then return end
-
-    -- Clean struct if over an hour ago
-    local age = GetGameTimeSeconds() - data.timeWhispered
-    if (age > 360) then
-        wantedItems[name] = nil
-        return
-    end
-
-    return data.items
-end
-
--- Returns: {slotIndex, slotIndex,}
---          {} if none
-local function GetMatchingItems(name)
-    local wanted = GetRecipientWantedItems(name)
-    if (not wanted) then
-        -- None of us are wanted
-        return {}
-    end
-
-    -- Go through bag to find matching items
-    local matches = {}
-    local bagCache = SHARED_INVENTORY:GetOrCreateBagCache(BAG_BACKPACK)
-    for _, item in pairs(bagCache) do
-        if (IsItemBound(item.bagId, item.slotIndex)) then
-            -- Bound already
-        elseif (IsItemPlayerLocked(item.bagId, item.slotIndex)) then
-            -- Locked
-            -- TODO: show in tooltip that it's locked, instead of not adding to list at all
-        elseif (IsItemBoPAndTradeable(item.bagId, item.slotIndex)) then
-            -- BoP Tradeable, cannot be mailed
-        else
-            -- TODO: maybe match trait too?
-            -- TODO: this might add doubles?
-            local itemLink = GetItemLink(item.bagId, item.slotIndex, LINK_STYLE_BRACKETS)
-            local itemId = GetItemLinkItemId(itemLink)
-            if (wanted[itemId]) then
-                table.insert(matches, item.slotIndex)
-            end
-        end
-    end
-
-    return matches
-end
-
-local function GetMatchingItemsString(name)
-    local resultItems = ""
-
-    local matches = GetMatchingItems(name)
-    for _, slotIndex in pairs(matches) do
-        local itemLink = GetItemLink(BAG_BACKPACK, slotIndex, LINK_STYLE_BRACKETS)
-        resultItems = string.format("%s\n%s", resultItems, itemLink)
-    end
-
-    return resultItems
-end
 
 ---------------------------------------------------------------------
 -- Mail side "panel" showing players and their wanted items
@@ -98,7 +27,7 @@ local function UpdateMailUI()
     local controlIndex = 0
     local previousControl
     local maximumTextWidth = 0
-    for name, data in pairs(wantedItems) do
+    for name, _ in pairs(wantedItems) do
         controlIndex = controlIndex + 1
         local control = controls[controlIndex]
 
@@ -114,7 +43,7 @@ local function UpdateMailUI()
         control:SetHidden(false)
 
         -- Update the control's text
-        local itemsString = GetMatchingItemsString(name)
+        local _, itemsString = SCM.Whisper.GetMatchingItems(name, false)
         local label = control:GetNamedChild("Label")
         label:SetText(string.format("%s wants:%s",
             name,
@@ -149,7 +78,7 @@ local function AddItemsToMail(button)
     local name = button:GetParent().recipientName
     ClearQueuedMail()
     ZO_MailSendToField:SetText(name)
-    local matches = GetMatchingItems(name)
+    local matches, _ = SCM.Whisper.GetMatchingItems(name, false)
 
     for i = 1, MAIL_MAX_ATTACHED_ITEMS do
         if (#matches > 0) then
@@ -173,27 +102,34 @@ SCM.Mail.AddItemsToMail = AddItemsToMail
 function SCM.Mail.Initialize()
     SCM_Mail:SetParent(ZO_MailSend)
 
-    -- SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
-    --     items = {
-    --         [102404] = 1,
-    --         [180231] = 1,
-    --     },
-    --     timeWhispered = GetGameTimeSeconds(),
-    -- }
+    SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
+        items = {
+            [102404] = 1,
+            [180231] = 1,
+            [84620] = 1,
+            [86802] = 1,
+        },
+        timeWhispered = GetGameTimeSeconds(),
+    }
 
-    -- SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
-    --     items = {
-    --         [174633] = 1,
-    --         [155052] = 1,
-    --         [102144] = 1,
-    --         [15746] = 1,
-    --         [102176] = 1,
-    --         [125826] = 1,
-    --         [180231] = 1,
-    --         [102374] = 1,
-    --     },
-    --     timeWhispered = GetGameTimeSeconds(),
-    -- }
+    SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
+        items = {
+            [174633] = 1,
+            [155052] = 1,
+            [102144] = 1,
+            [15746] = 1,
+            [102176] = 1,
+            [125826] = 1,
+            [180231] = 1,
+            [102374] = 1,
+            [133095] = 1,
+            [155103] = 1,
+            [84620] = 1,
+            [86802] = 1,
+            [97237] = 1,
+        },
+        timeWhispered = GetGameTimeSeconds(),
+    }
 
     UpdateMailUI()
 end
