@@ -22,7 +22,7 @@
         </Control>
 
         <!-- Mail -->
-        <Control name="MailPlayerTemplate" virtual="true">
+        <Control name="MailPlayerTemplate" virtual="true" hidden="true">
             <Dimensions x="60" y="60"/>
             <Controls>
                 <Backdrop name="$(parent)Backdrop" centerColor="88000000" edgeColor="00000000" hidden="false">

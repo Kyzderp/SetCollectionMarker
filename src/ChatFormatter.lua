@@ -80,7 +80,7 @@ end
 local function OnLinkClicked(_, _, _, _, linkType, requestKey)
     if (linkType == REQUEST_LINK_TYPE) then
         local requestData = requestLinks[tonumber(requestKey)]
-        StartChatInput(string.format(SCM.savedOptions.requestFormat, requestData.items),
+        StartChatInput(SCM.savedOptions.requestPrefix .. requestData.items,
             CHAT_CHANNEL_WHISPER, requestData.name)
         return true
     end

@@ -64,6 +64,7 @@ local function AddItemsToTrade()
             TradeAddItem(BAG_BACKPACK, slotIndex, tradeIndex)
         end
     end
+    SCM.Mail.UpdateMailUI()
 end
 SCM.Trade.AddItemsToTrade = AddItemsToTrade
 
@@ -98,5 +99,7 @@ function SCM.Trade.Initialize()
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "TradeConsidering", EVENT_TRADE_INVITE_CONSIDERING, OnTradeInvite)
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "TradeWaiting", EVENT_TRADE_INVITE_WAITING, OnTradeInvite)
     EVENT_MANAGER:RegisterForEvent(SCM.name .. "TradeAccepted", EVENT_TRADE_INVITE_ACCEPTED, OnTrade)
+
+    SCM_TradeButtonAddItems:SetHidden(not SCM.savedOptions.showTradeButton)
 end
 

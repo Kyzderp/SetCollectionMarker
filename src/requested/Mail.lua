@@ -45,7 +45,9 @@ local function UpdateMailUI()
                     "")
                 table.insert(controls, control)
             end
-            control:SetHidden(false)
+            if (SCM.savedOptions.showMailUI) then
+                control:SetHidden(false)
+            end
 
             -- Update the control's text
             local label = control:GetNamedChild("Label")
@@ -107,34 +109,35 @@ SCM.Mail.AddItemsToMail = AddItemsToMail
 function SCM.Mail.Initialize()
     SCM_Mail:SetParent(ZO_MailSend)
 
-    SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
-        items = {
-            [102404] = 1,
-            [180231] = 1,
-            [84620] = 1,
-            [86802] = 1,
-        },
-        timeWhispered = GetGameTimeSeconds(),
-    }
+    -- SCM.Whisper.GetWantedItems()["@Kyzeragon"] = {
+    --     items = {
+    --         [102404] = 1,
+    --         [180231] = 1,
+    --         [84620] = 1,
+    --         [86802] = 1,
+    --     },
+    --     timeWhispered = GetGameTimeSeconds(),
+    -- }
 
-    SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
-        items = {
-            [174633] = 1,
-            [155052] = 1,
-            [102144] = 1,
-            [15746] = 1,
-            [102176] = 1,
-            [125826] = 1,
-            [180231] = 1,
-            [102374] = 1,
-            [133095] = 1,
-            [155103] = 1,
-            [84620] = 1,
-            [86802] = 1,
-            [97237] = 1,
-        },
-        timeWhispered = GetGameTimeSeconds(),
-    }
+    -- SCM.Whisper.GetWantedItems()["Not Kyzer"] = {
+    --     items = {
+    --         [174633] = 1,
+    --         [155052] = 1,
+    --         [102144] = 1,
+    --         [15746] = 1,
+    --         [102176] = 1,
+    --         [125826] = 1,
+    --         [180231] = 1,
+    --         [102374] = 1,
+    --         [133095] = 1,
+    --         [155103] = 1,
+    --         [84620] = 1,
+    --         [86802] = 1,
+    --         [97237] = 1,
+    --         [123446] = 1,
+    --     },
+    --     timeWhispered = GetGameTimeSeconds(),
+    -- }
 
     UpdateMailUI()
 end

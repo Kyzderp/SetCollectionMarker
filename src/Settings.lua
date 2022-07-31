@@ -321,6 +321,68 @@ function SCM.CreateSettingsMenu()
                     end,
                 },
             }
+        },
+---------------------------------------------------------------------
+-- Trading options
+        {
+            type = "submenu",
+            name = "Trading",
+            controls = {
+                {
+                    type = "description",
+                    title = nil,
+                    text = "Provides some tools for easier trading of collectible gear.",
+                    width = "full",
+                },
+                {
+                    type = "checkbox",
+                    name = "Request button",
+                    tooltip = "Show a [Req] button in front of player-sent messages containing links for uncollected items. Clicking the button will prefill a whisper to that player to request the items",
+                    default = true,
+                    getFunc = function() return SCM.savedOptions.showRequestLink end,
+                    setFunc = function(value)
+                        SCM.savedOptions.showRequestLink = value
+                    end,
+                    width = "half",
+                },
+                {
+                    type = "editbox",
+                    name = "Request button prefix",
+                    tooltip = "The message prefix for requesting items via the [Req] button",
+                    getFunc = function() return SCM.savedOptions.requestPrefix end,
+                    setFunc = function(value)
+                        SCM.savedOptions.requestPrefix = value
+                    end,
+                    isMultiline = false,
+                    isExtraWide = false,
+                    width = "full",
+                    disabled = function() return not SCM.savedOptions.showRequestLink end,
+                },
+                {
+                    type = "checkbox",
+                    name = "Trade window button",
+                    tooltip = "Show a |t36:36:esoui/art/collections/collections_tabIcon_itemSets_down.dds|t button in the trade window when trading with another player. If that player has whispered you any item links recently, clicking the button will add the tradeable items you have to the trade window",
+                    default = true,
+                    getFunc = function() return SCM.savedOptions.showTradeButton end,
+                    setFunc = function(value)
+                        SCM.savedOptions.showTradeButton = value
+                        SCM_TradeButtonAddItems:SetHidden(not SCM.savedOptions.showTradeButton)
+                    end,
+                    width = "full",
+                },
+                {
+                    type = "checkbox",
+                    name = "Mail window UI",
+                    tooltip = "Show boxes in the Send Mail window that list item links players have whispered to you. Clicking the button will add the mailable items you have to the mail and fill in the recipient",
+                    default = true,
+                    getFunc = function() return SCM.savedOptions.showMailUI end,
+                    setFunc = function(value)
+                        SCM.savedOptions.showMailUI = value
+                        SCM.Mail.UpdateMailUI()
+                    end,
+                    width = "full",
+                },
+            }
         }
     }
 
