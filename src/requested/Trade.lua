@@ -64,6 +64,7 @@ local function AddItemsToTrade()
             TradeAddItem(BAG_BACKPACK, slotIndex, tradeIndex)
         end
     end
+    UpdateTradeButton()
     SCM.Mail.UpdateMailUI()
 end
 SCM.Trade.AddItemsToTrade = AddItemsToTrade

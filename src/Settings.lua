@@ -348,7 +348,8 @@ function SCM.CreateSettingsMenu()
                 {
                     type = "editbox",
                     name = "Request button prefix",
-                    tooltip = "The message prefix for requesting items via the [Req] button",
+                    tooltip = "The message prefix for requesting items via the [Req] button. Recommended <= 10 character length",
+                    default = "Can I get",
                     getFunc = function() return SCM.savedOptions.requestPrefix end,
                     setFunc = function(value)
                         SCM.savedOptions.requestPrefix = value

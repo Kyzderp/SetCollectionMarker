@@ -6,7 +6,7 @@
 SetCollectionMarker = SetCollectionMarker or {}
 local SCM = SetCollectionMarker
 SCM.name = "SetCollectionMarker"
-SCM.version = "1.3.0"
+SCM.version = "2.0.0"
 
 -- LibDebugLogger
 if (LibDebugLogger) then
@@ -58,7 +58,7 @@ local defaultOptions = {
     chatIconColor = {0.4, 1, 0.5},
 
     showRequestLink = true,
-    requestPrefix = "Can I please have",
+    requestPrefix = "Can I get",
     showTradeButton = true,
     showMailUI = true,
 }
