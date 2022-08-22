@@ -1,8 +1,8 @@
 ## Title: SetCollectionMarker
 ## Mark uncollected set items in inventories and chat
 ## Author: Kyzeragon
-## Version: 2.0.0
-## APIVersion: 101034
+## Version: 2.0.1
+## APIVersion: 101035
 ## DependsOn: LibAddonMenu-2.0>=31
 
 ## OptionalDependsOn: pChat rChat LibDebugLogger>=196
