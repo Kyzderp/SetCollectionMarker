@@ -43,16 +43,28 @@ function SCM.Gamepad.SetupGamepadBagHooks()
             showKey = "crafting",
         },
         bankWithdraw = {
-            init = { object = ZO_BankingCommon_Gamepad, functionName = "OnDeferredInitialize" },
+            init = { object = ZO_GamepadBanking, functionName = "OnDeferredInitialize" },
             list = function() return GAMEPAD_BANKING.withdrawList.list end,
             templateName = "ZO_GamepadItemSubEntryTemplate",
             showKey = "bank"
         },
         bankDeposit = {
-            init = { object = ZO_BankingCommon_Gamepad, functionName = "OnDeferredInitialize" },
+            init = { object = ZO_GamepadBanking, functionName = "OnDeferredInitialize" },
             list = function() return GAMEPAD_BANKING.depositList.list end,
             templateName = "ZO_GamepadItemSubEntryTemplate",
             showKey = "bank"
+        },
+        guildBankWithdraw = {
+            init = { object = ZO_GuildBank_Gamepad, functionName = "OnDeferredInitialization" },
+            list = function() return GAMEPAD_GUILD_BANK.withdrawList.list end,
+            templateName = "ZO_GamepadItemSubEntryTemplate",
+            showKey = "guild"
+        },
+        guildBankDeposit = {
+            init = { object = ZO_GuildBank_Gamepad, functionName = "OnDeferredInitialization" },
+            list = function() return GAMEPAD_GUILD_BANK.depositList.list end,
+            templateName = "ZO_GamepadItemSubEntryTemplate",
+            showKey = "guild"
         },
         transmute = {
             list = function() return ZO_RETRAIT_STATION_RETRAIT_GAMEPAD.inventory.list end,
