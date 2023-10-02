@@ -6,7 +6,7 @@
 SetCollectionMarker = SetCollectionMarker or {}
 local SCM = SetCollectionMarker
 SCM.name = "SetCollectionMarker"
-SCM.version = "2.0.2"
+SCM.version = "2.1.0"
 
 -- LibDebugLogger
 if (LibDebugLogger) then
