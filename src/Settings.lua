@@ -343,7 +343,18 @@ function SCM.CreateSettingsMenu()
                     setFunc = function(value)
                         SCM.savedOptions.showRequestLink = value
                     end,
-                    width = "half",
+                    width = "full",
+                },
+                {
+                    type = "checkbox",
+                    name = "Request in whisper",
+                    tooltip = "Use the whisper channel to request items from the player. If turned OFF, the message will be prefilled in the same channel as the original message instead. Note: if the request is not done in whisper chat, the trade/mail item prefill button will not work",
+                    default = true,
+                    getFunc = function() return SCM.savedOptions.requestInWhisper end,
+                    setFunc = function(value)
+                        SCM.savedOptions.requestInWhisper = value
+                    end,
+                    width = "full",
                 },
                 {
                     type = "editbox",

@@ -59,6 +59,7 @@ local defaultOptions = {
 
     showRequestLink = true,
     requestPrefix = "Can I get",
+    requestInWhisper = true,
     showTradeButton = true,
     showMailUI = true,
 }

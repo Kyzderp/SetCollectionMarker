@@ -57,7 +57,7 @@ local function ParseItemLinks(message, location, fromDisplayName, messageType)
     if (fromDisplayName and fromDisplayName ~= GetUnitDisplayName("player") and messageType ~= CHAT_CHANNEL_WHISPER_SENT) then
     -- |H1:item:74181:364:50:0:0:0:0:0:0:0:0:0:0:0:0:41:0:0:0:0:0|h|h
         requestKey = #requestLinks + 1
-        requestLinks[requestKey] = {name = fromDisplayName, items = itemsString}
+        requestLinks[requestKey] = {name = fromDisplayName, items = itemsString, channel = messageType}
     end
 
     -- For the single-icon options, just put it in the Location
@@ -80,8 +80,12 @@ end
 local function OnLinkClicked(_, _, _, _, linkType, requestKey)
     if (linkType == REQUEST_LINK_TYPE) then
         local requestData = requestLinks[tonumber(requestKey)]
-        StartChatInput(SCM.savedOptions.requestPrefix .. requestData.items,
-            CHAT_CHANNEL_WHISPER, requestData.name)
+        if (SCM.savedOptions.requestInWhisper or requestData.channel == CHAT_CHANNEL_WHISPER) then
+            StartChatInput(SCM.savedOptions.requestPrefix .. requestData.items, CHAT_CHANNEL_WHISPER, requestData.name)
+        else
+            -- Use the same channel as the original chat message if setting is off
+            StartChatInput(SCM.savedOptions.requestPrefix .. requestData.items, requestData.channel)
+        end
         return true
     end
 end
